@@ -14,4 +14,12 @@ model User {
   name      String
   username  String   @unique
   password  String
+  chirps    Chirp[]
+}
+
+model Chirp {
+  id        String   @id @map("_id") @default(dbgenerated()) @db.ObjectId
+  createdAt DateTime @default(now())
+  authorId  String   @db.ObjectId
+  author    User     @relation(fields: [authorId], references: [id])
 }

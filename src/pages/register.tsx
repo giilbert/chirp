@@ -6,6 +6,7 @@ import {
   Heading,
   Input,
   InputGroup,
+  Spinner,
   Text,
 } from '@chakra-ui/react';
 import { Form, Formik, FormikProps, yupToFormErrors } from 'formik';
@@ -111,6 +112,7 @@ const RegisterForm = () => (
           <Text>Password</Text>
           <Input
             placeholder="**********"
+            type="password"
             onChange={(e) => setFieldValue('password', e.target.value)}
           />
           <Text color="red.300">{errors.password}</Text>
@@ -120,12 +122,13 @@ const RegisterForm = () => (
           <Text>Confirm Password</Text>
           <Input
             placeholder="**********"
+            type="password"
             onChange={(e) => setFieldValue('confirmPassword', e.target.value)}
           />
           <Text color="red.300">{errors.confirmPassword}</Text>
         </InputGroup>
 
-        <Button type="submit" colorScheme="blue">
+        <Button type="submit" colorScheme="blue" isLoading={isSubmitting}>
           Register
         </Button>
       </Form>

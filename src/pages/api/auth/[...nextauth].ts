@@ -11,12 +11,30 @@ export default NextAuth({
     signingKey: process.env.JWT_SIGNING_KEY,
   },
   callbacks: {
-    async session({ session, token }) {
-      // expose user id
-      return Promise.resolve({
-        ...session,
-        user: { ...session.user, id: token.sub },
-      });
+    async jwt({ token, user, profile, account, isNewUser }) {
+      // console.log('-----------------');
+      // console.log('jwt', token, user, profile, account, isNewUser);
+      // console.log('-----------------');
+
+      if (user?.username) token.username = user.username;
+
+      return token;
+    },
+    async session({ session: defaultSession, token }) {
+      const session = defaultSession as SessionWithUserId;
+      // console.log('----------------');
+      // console.log('session ', session);
+      // console.log('token ', token);
+      // console.log('user ', user);
+      // console.log('----------------');
+
+      // expose user id and username
+      if (token && session.user) {
+        session.user.username = token.username as string;
+        session.user.id = token.id as string;
+      }
+
+      return Promise.resolve(session);
     },
   },
   providers: [
@@ -38,11 +56,13 @@ export default NextAuth({
         }
         prisma.$disconnect();
 
+        // console.log(user);
+
         if (user) {
           return {
+            id: user.id,
             name: user.name,
             username: user.username,
-            id: user.id,
           };
         } else {
           return null;
@@ -56,7 +76,7 @@ interface SessionWithUserId extends Session {
   expires: string;
   user: {
     name: string;
-    email: string;
+    username: string;
     id: string | undefined;
   };
 }

@@ -23,12 +23,12 @@ export default NextAuth({
     Credentials({
       id: 'credentials',
       authorize: async (credentials: any, res) => {
-        if (!credentials.email || !credentials.password) return null;
+        if (!credentials.username || !credentials.password) return null;
 
         prisma.$connect();
         const user = await prisma.user.findFirst({
           where: {
-            email: credentials.email,
+            username: credentials.username,
           },
         });
         if (!user) return null;
@@ -42,7 +42,6 @@ export default NextAuth({
           return {
             name: user.name,
             username: user.username,
-            email: user.email,
             id: user.id,
           };
         } else {

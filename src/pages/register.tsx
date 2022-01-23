@@ -79,12 +79,7 @@ const RegisterForm = () => (
     }}
   >
     {({
-      values,
       errors,
-      touched,
-      handleChange,
-      handleBlur,
-      handleSubmit,
       isSubmitting,
       setFieldValue,
     }: /* and other goodies */

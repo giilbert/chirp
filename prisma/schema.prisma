@@ -19,6 +19,7 @@ model User {
 
 model Chirp {
   id        String   @id @map("_id") @default(dbgenerated()) @db.ObjectId
+  content   String
   createdAt DateTime @default(now())
   authorId  String   @db.ObjectId
   author    User     @relation(fields: [authorId], references: [id])

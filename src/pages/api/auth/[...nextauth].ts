@@ -31,7 +31,7 @@ export default NextAuth({
       // expose user id and username
       if (token && session.user) {
         session.user.username = token.username as string;
-        session.user.id = token.id as string;
+        session.user.id = token.sub as string;
       }
 
       return Promise.resolve(session);

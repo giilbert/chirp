@@ -48,8 +48,6 @@ const LoginForm = () => {
       }}
       validationSchema={schema}
       onSubmit={async (values, { setErrors }) => {
-        console.log(values);
-
         await signIn('credentials', {
           username: values.username,
           password: values.password,

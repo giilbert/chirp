@@ -17,33 +17,34 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { SessionWithUserId } from './api/auth/[...nextauth]';
 import * as Yup from 'yup';
+import { Chirp, PrismaClient, User } from '@prisma/client';
+import ChirpCard from '@components/Chirp';
 
 interface PageProps {
   session: SessionWithUserId;
+  recentChirps: ChirpWithAuthor[];
 }
 
-function IndexPage({ session }: PageProps) {
+function IndexPage({ session, recentChirps }: PageProps) {
   // user signed in
-  if (session)
-    return (
-      <Center>
-        <Container width="500px" mt="50px">
-          <Text>
-            Signed in as <b>{session.user.username}</b>
-          </Text>
-          <Button onClick={() => signOut()}>Sign out</Button>
-          <CreateChirp />
-        </Container>
-      </Center>
-    );
-
-  // user is NOT signed in
   return (
     <Center>
       <Container width="500px" mt="50px">
-        <Link href="/login">
-          <Button>Login</Button>
-        </Link>
+        {session ? (
+          <>
+            <Text fontSize="xl">
+              Signed in as <b>{session.user.name}</b>
+            </Text>
+            <Button onClick={() => signOut()}>Sign out</Button>
+            <CreateChirp />
+          </>
+        ) : (
+          <Link href="/login">
+            <Button>Login</Button>
+          </Link>
+        )}
+
+        <RecentChirps data={recentChirps} />
       </Container>
     </Center>
   );
@@ -70,8 +71,6 @@ function CreateChirp() {
         }}
         validationSchema={schema}
         onSubmit={(values, helpers) => {
-          console.log(values);
-
           fetch('/api/createChirp', {
             method: 'POST',
             body: JSON.stringify(values),
@@ -90,7 +89,6 @@ function CreateChirp() {
           errors,
           isSubmitting,
           setFieldValue,
-          setErrors,
         }: /* and other goodies */
         FormikProps<FormValues>) => (
           <Form>
@@ -124,12 +122,66 @@ function CreateChirp() {
   );
 }
 
+type ChirpWithAuthor = Chirp & {
+  // JSON.stringify doesnt work with Date for some reason
+  // The timestamp
+  createdAt: string;
+  author: User;
+};
+
+function RecentChirps({ data }: { data: ChirpWithAuthor[] }) {
+  return (
+    <Box mt="10">
+      {data.map((chirp, i) => {
+        return <ChirpCard key={i} {...chirp} />;
+      })}
+    </Box>
+  );
+}
+
+const prisma = new PrismaClient();
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   ctx
 ) => {
+  // query recent chirps
+  await prisma.$connect();
+
+  const recentChirps = (
+    await prisma.chirp.findMany({
+      take: 10,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        content: true,
+        createdAt: true,
+        id: true,
+        author: {
+          select: {
+            name: true,
+            username: true,
+            id: true,
+          },
+        },
+        authorId: true,
+      },
+    })
+  ).map((v) => {
+    // JSON cant serialize Date
+    // @ts-ignore
+    return {
+      ...v,
+      createdAt: v.createdAt.getTime(),
+    };
+  });
+
+  await prisma.$disconnect();
+
   return {
     props: {
       session: (await getSession({ ctx })) as SessionWithUserId,
+      // @ts-ignore
+      recentChirps: recentChirps as ChirpWithAuthor[],
     },
   };
 };

@@ -43,7 +43,7 @@ export default NextAuth({
       authorize: async (credentials: any, res) => {
         if (!credentials.username || !credentials.password) return null;
 
-        prisma.$connect();
+        await prisma.$connect();
         const user = await prisma.user.findFirst({
           where: {
             username: credentials.username,
@@ -54,7 +54,7 @@ export default NextAuth({
         if ((await compare(credentials.password, user.password)) === false) {
           return null;
         }
-        prisma.$disconnect();
+        await prisma.$disconnect();
 
         // console.log(user);
 

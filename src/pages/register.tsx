@@ -58,8 +58,6 @@ const RegisterForm = () => (
     }}
     validationSchema={schema}
     onSubmit={async (values, { setErrors }) => {
-      console.log(values);
-
       const res = await fetch('/api/auth/register', {
         body: JSON.stringify(values),
         method: 'POST',
@@ -72,9 +70,7 @@ const RegisterForm = () => (
         const errors = await res.json();
         if (errors) setErrors(errors);
       } catch {
-        console.log('yup!');
-
-        // window.location.href = '/login';
+        window.location.href = '/login';
       }
     }}
   >

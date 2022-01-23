@@ -30,7 +30,7 @@ export default async function handler(
     return;
   }
 
-  prisma.$connect();
+  await prisma.$connect();
 
   await prisma.chirp.create({
     data: {
@@ -40,7 +40,7 @@ export default async function handler(
     },
   });
 
-  prisma.$disconnect();
+  await prisma.$disconnect();
 
   res.status(200).end();
 }

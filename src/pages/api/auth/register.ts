@@ -26,8 +26,6 @@ export default async function handler(
 ) {
   const data = req.body;
 
-  console.log(data);
-
   if (!schema.isValid(data)) {
     res.send('Invalid registration info');
     return;
@@ -60,5 +58,5 @@ export default async function handler(
 
   res.status(200).end();
 
-  prisma.$disconnect();
+  await prisma.$disconnect();
 }

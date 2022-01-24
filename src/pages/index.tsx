@@ -3,18 +3,16 @@ import {
   Center,
   Container,
   Text,
-  Link as StyledLink,
   Textarea,
   Box,
   TextareaProps,
-  FormControl,
 } from '@chakra-ui/react';
 import { Form, Formik, FormikProps } from 'formik';
 import { motion } from 'framer-motion';
 import { GetServerSideProps } from 'next';
 import { getSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SessionWithUserId } from './api/auth/[...nextauth]';
 import * as Yup from 'yup';
 import { Chirp, PrismaClient, User } from '@prisma/client';
@@ -60,6 +58,7 @@ const schema = Yup.object().shape({
 
 const maxLength = 500;
 const AnimatedTextarea = motion<TextareaProps>(Textarea);
+
 function CreateChirp() {
   const [value, setValue] = useState('');
 

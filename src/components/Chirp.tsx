@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { User } from '@prisma/client';
+import Link from 'next/link';
 
 interface ChirpProps {
   content: string;
@@ -13,12 +14,19 @@ function Chirp({ author, content, createdAt }: ChirpProps) {
   return (
     <Box borderWidth="1px" p="4" mb="2">
       <Flex>
-        <Flex>
-          <Text>{author.name}</Text>
-          <Text color="gray" display="inline-block">
-            @{author.username}
-          </Text>
-        </Flex>
+        <Link href={`/u/${author.username}`}>
+          <Flex
+            _hover={{
+              textDecoration: 'underline',
+              cursor: 'pointer',
+            }}
+          >
+            <Text>{author.name}</Text>
+            <Text color="gray" display="inline-block">
+              @{author.username}
+            </Text>
+          </Flex>
+        </Link>
         <Text color="gray" pl="2">
           {date.toLocaleString('en-us', {
             month: 'short',
@@ -40,16 +48,19 @@ function ContentDisplay({ content }: { content: string }) {
   const parseHashtags = (line: string) => {
     const tokens = line.split(hashtagRegex);
 
-    console.log(tokens);
-
     return (
       <span>
         {tokens.map((v, i) => {
           if (v.charAt(0) === '#') {
             return (
-              <Text color="cornflowerblue" key={i} display="inline-block">
+              <span
+                style={{
+                  color: 'cornflowerblue',
+                }}
+                key={i}
+              >
                 {v}
-              </Text>
+              </span>
             );
           }
 

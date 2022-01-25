@@ -6,11 +6,12 @@ import {
   Textarea,
   Box,
   TextareaProps,
+  SkeletonText,
 } from '@chakra-ui/react';
 import { Form, Formik, FormikProps } from 'formik';
 import { motion } from 'framer-motion';
 import { GetServerSideProps } from 'next';
-import { getSession, signOut } from 'next-auth/react';
+import { getSession, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { SessionWithUserId } from './api/auth/[...nextauth]';
@@ -18,13 +19,21 @@ import * as Yup from 'yup';
 import { PrismaClient } from '@prisma/client';
 import ChirpCard from '@components/Chirp';
 import { Chirp } from '../utils/types/Chirp';
+import useSwr from 'swr';
+import { UseSessionReturn } from 'utils/types/Session';
 
 interface PageProps {
   session: SessionWithUserId;
-  recentChirps: Chirp[];
 }
 
-function IndexPage({ session, recentChirps }: PageProps) {
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+function IndexPage({ session }: PageProps) {
+  const { data: recentChirps, error } = useSwr<Chirp[]>(
+    '/api/getRecentChirps',
+    fetcher
+  );
+
   // user signed in
   return (
     <Center>
@@ -43,7 +52,15 @@ function IndexPage({ session, recentChirps }: PageProps) {
           </Link>
         )}
 
-        <RecentChirps data={recentChirps} />
+        {error && <Text>An error occured.</Text>}
+
+        {!recentChirps ? (
+          <Box padding="4" bg="white">
+            <SkeletonText mt="4" noOfLines={5} spacing="4" />
+          </Box>
+        ) : (
+          <RecentChirps data={recentChirps} />
+        )}
       </Container>
     </Center>
   );
@@ -132,49 +149,12 @@ function RecentChirps({ data }: { data: Chirp[] }) {
   );
 }
 
-const prisma = new PrismaClient();
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   ctx
 ) => {
-  // query recent chirps
-  await prisma.$connect();
-
-  const recentChirps = (
-    await prisma.chirp.findMany({
-      take: 10,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      select: {
-        content: true,
-        createdAt: true,
-        id: true,
-        author: {
-          select: {
-            name: true,
-            username: true,
-            id: true,
-          },
-        },
-        authorId: true,
-      },
-    })
-  ).map((v) => {
-    // JSON cant serialize Date
-    // @ts-ignore
-    return {
-      ...v,
-      createdAt: v.createdAt.getTime(),
-    };
-  });
-
-  await prisma.$disconnect();
-
   return {
     props: {
       session: (await getSession({ ctx })) as SessionWithUserId,
-      // @ts-ignore
-      recentChirps: recentChirps as ChirpWithAuthor[],
     },
   };
 };

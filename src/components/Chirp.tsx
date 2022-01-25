@@ -1,12 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { User } from '@prisma/client';
+import { Chirp as ChirpProps } from '../utils/types/Chirp';
 import Link from 'next/link';
-
-interface ChirpProps {
-  content: string;
-  author: User;
-  createdAt: string;
-}
 
 function Chirp({ author, content, createdAt }: ChirpProps) {
   const date = new Date(createdAt);

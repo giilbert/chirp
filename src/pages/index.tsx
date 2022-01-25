@@ -12,15 +12,16 @@ import { motion } from 'framer-motion';
 import { GetServerSideProps } from 'next';
 import { getSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SessionWithUserId } from './api/auth/[...nextauth]';
 import * as Yup from 'yup';
-import { Chirp, PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import ChirpCard from '@components/Chirp';
+import { Chirp } from '../utils/types/Chirp';
 
 interface PageProps {
   session: SessionWithUserId;
-  recentChirps: ChirpWithAuthor[];
+  recentChirps: Chirp[];
 }
 
 function IndexPage({ session, recentChirps }: PageProps) {
@@ -121,14 +122,7 @@ function CreateChirp() {
   );
 }
 
-type ChirpWithAuthor = Chirp & {
-  // JSON.stringify doesnt work with Date for some reason
-  // The timestamp
-  createdAt: string;
-  author: User;
-};
-
-function RecentChirps({ data }: { data: ChirpWithAuthor[] }) {
+function RecentChirps({ data }: { data: Chirp[] }) {
   return (
     <Box mt="10">
       {data.map((chirp, i) => {

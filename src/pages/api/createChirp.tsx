@@ -22,7 +22,6 @@ export default async function handler(
   }
 
   const data = req.body;
-  // TODO: validate content
 
   // validate the chirp
   if (!schema.isValid(data)) {

@@ -1,27 +1,20 @@
-import {
-  Box,
-  BoxProps,
-  Center,
-  CenterProps,
-  Container,
-  ContainerProps,
-  Flex,
-  Heading,
-} from '@chakra-ui/react';
-import { Chirp, PrismaClient, User } from '@prisma/client';
+import { Box, Center, Container, Flex, Heading } from '@chakra-ui/react';
+import { Chirp, PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import ChirpCard from '@components/Chirp';
 import { ChevronLeftIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
 
+// TODO: reorder this mess
+interface UserAndChirpType {
+  username: string;
+  name: string;
+  // override the createdAt property of Chirp to become a number
+  chirps: (Omit<Chirp, 'createdAt'> & { createdAt: number })[];
+}
+
 interface PageProps {
-  user: {
-    username: string;
-    name: string;
-    chirps: (Chirp & {
-      createdAt: string;
-    })[];
-  };
+  user: UserAndChirpType;
 }
 
 function UserPage({ user }: PageProps) {
@@ -41,34 +34,33 @@ function UserPage({ user }: PageProps) {
           </Heading>
         </Flex>
 
-        <UserChirps data={user.chirps} author={user} />
+        <UserChirps data={user} />
       </Container>
     </Center>
   );
 }
 
 function UserChirps({
-  data,
-  author,
+  data: { chirps, name, username },
 }: {
-  data: (Chirp & {
-    createdAt: string;
-  })[];
-  author: {
-    username: string;
-    name: string;
-  };
+  data: UserAndChirpType;
 }) {
   return (
     <Box mt="10">
-      {data.map((chirp, i) => {
+      {chirps.map((chirp, i) => {
         return (
           <ChirpCard
             key={i}
             {...{
+              id: chirp.id,
+              authorId: chirp.authorId,
               content: chirp.content,
-              author: author as User,
-              createdAt: chirp.createdAt,
+              author: {
+                name,
+                username,
+                id: chirp.authorId,
+              },
+              createdAt: chirp.createdAt as number,
             }}
           />
         );
@@ -107,7 +99,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     username: string;
     name: string;
     chirps: (Chirp & {
-      createdAt: string;
+      createdAt: number;
     })[];
   };
 

@@ -7,13 +7,14 @@ import {
   Box,
   TextareaProps,
   SkeletonText,
+  Spinner,
 } from '@chakra-ui/react';
 import { Form, Formik, FormikProps } from 'formik';
-import { motion } from 'framer-motion';
+import { motion, useViewportScroll } from 'framer-motion';
 import { GetServerSideProps } from 'next';
 import { getSession, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { MutableRefObject, useMemo, useRef, useState } from 'react';
 import { SessionWithUserId } from './api/auth/[...nextauth]';
 import * as Yup from 'yup';
 import { PrismaClient } from '@prisma/client';
@@ -21,6 +22,7 @@ import ChirpCard from '@components/Chirp';
 import { Chirp } from '../utils/types/Chirp';
 import useSwr from 'swr';
 import { UseSessionReturn } from 'utils/types/Session';
+import { useInView } from 'react-intersection-observer';
 
 interface PageProps {
   session: SessionWithUserId;
@@ -55,9 +57,10 @@ function IndexPage({ session }: PageProps) {
         {error && <Text>An error occured.</Text>}
 
         {!recentChirps ? (
-          <Box padding="4" bg="white">
-            <SkeletonText mt="4" noOfLines={5} spacing="4" />
-          </Box>
+          // <Box padding="4" bg="white">
+          //   <SkeletonText mt="4" noOfLines={5} spacing="4" />
+          // </Box>
+          <Spinner />
         ) : (
           <RecentChirps data={recentChirps} />
         )}
@@ -139,12 +142,36 @@ function CreateChirp() {
   );
 }
 
+let offset = 0;
 function RecentChirps({ data }: { data: Chirp[] }) {
+  // the chirps, PLUS all the chirps fetched after
+  const [persistantData, setPersistantData] = useState(data);
+  const [ref, inView] = useInView({ threshold: 0.5, delay: 10 });
+  const [theEnd, setTheEnd] = useState(false);
+
+  console.log(persistantData);
+
+  if (inView) {
+    fetcher(`/api/getRecentChirps?offset=${(offset + 1) * 10}`).then((data) => {
+      // when every recent post is grabbed
+      if (data.theEnd) {
+        setPersistantData([...persistantData, ...data.chirps]);
+        setTheEnd(true);
+        return;
+      }
+
+      setPersistantData([...persistantData, ...data]);
+    });
+    offset += 1;
+  }
+
   return (
     <Box mt="10">
-      {data.map((chirp, i) => {
+      {persistantData.map((chirp, i) => {
         return <ChirpCard key={i} {...chirp} />;
       })}
+
+      {!theEnd && <Spinner ref={ref} />}
     </Box>
   );
 }

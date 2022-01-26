@@ -9,7 +9,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = (await getSession({ req })) as SessionWithUserId;
+  const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
 
   await prisma.$connect();
 
@@ -31,7 +31,16 @@ export default async function handler(
       },
       authorId: true,
     },
+    skip: offset,
   });
+
+  if (chirps.length < 10) {
+    res.json({
+      chirps,
+      theEnd: true,
+    });
+    return;
+  }
 
   res.json(chirps);
 

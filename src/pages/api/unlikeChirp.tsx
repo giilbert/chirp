@@ -35,32 +35,42 @@ export default async function handler(
     },
   });
 
-  if (doesLikeExist) {
+  // the inverse, cant unlike if the like doesnt already exist
+  if (!doesLikeExist) {
     await prisma.$disconnect();
-    res.status(400).send('Post already liked.');
+    res.status(400).send('Post is not liked.');
     return;
   }
 
-  const createLike = prisma.like.create({
-    data: {
+  const like = await prisma.like.findFirst({
+    where: {
       chirpId: data.chirpId,
       userId: session.user.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const deleteLike = prisma.like.delete({
+    where: {
+      id: like.id,
     },
   });
 
   // also increment numLikes
-  const incrementLike = prisma.chirp.update({
+  const decrementLike = prisma.chirp.update({
     where: {
       id: data.chirpId,
     },
     data: {
       numLikes: {
-        increment: 1,
+        decrement: 1,
       },
     },
   });
 
-  await Promise.all([createLike, incrementLike]);
+  await Promise.all([deleteLike, decrementLike]);
 
   await prisma.$disconnect();
 

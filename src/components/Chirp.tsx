@@ -71,47 +71,52 @@ function HeartIcon({
   const [liked, setLiked] = useState(hasUserLiked);
   const errorToast = useToast();
 
+  const showError = () => {
+    errorToast({
+      title: 'An error occured liking the post.',
+      duration: 2000,
+      isClosable: true,
+      status: 'error',
+    });
+  };
+
   // makes the post request to like / unlike a chirp
   const toggleLike = async () => {
+    if (typeof liked === 'undefined') {
+      errorToast({
+        title: 'Please log in to like Chirps.',
+        status: 'info',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+
     if (liked === false) {
       setLiked(true);
       setLikes((v) => v + 1);
 
-      const res = await fetch('/api/likeChirp', {
+      const res = fetch('/api/likeChirp', {
         method: 'POST',
         body: JSON.stringify({ chirpId: chirpId }),
         headers: {
           'Content-Type': 'application/json',
         },
-      });
-      if (!res.ok)
-        errorToast({
-          title: 'An error occured liking the post.',
-          duration: 3,
-          isClosable: true,
-          status: 'error',
-        });
+      }).catch(showError);
+
+      if (!((await res) as Response).ok) showError();
     } else if (liked === true) {
       setLiked(false);
       setLikes((v) => v - 1);
 
-      fetch('/api/unlikeChirp', {
+      const res = await fetch('/api/unlikeChirp', {
         method: 'POST',
         body: JSON.stringify({ chirpId: chirpId }),
         headers: {
           'Content-Type': 'application/json',
         },
-      })
-        .then((res) => res.ok)
-        .then((ok) => {
-          if (!ok)
-            errorToast({
-              title: 'An error occured unliking the post.',
-              duration: 3,
-              isClosable: true,
-              status: 'error',
-            });
-        });
+      }).catch(showError);
+
+      if (!((await res) as Response).ok) showError();
     }
   };
 

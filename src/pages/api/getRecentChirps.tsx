@@ -46,7 +46,7 @@ export default async function handler(
       skip: offset,
     })
   ).map((v) => {
-    const liked = v.likes.length !== 0;
+    const liked = v.likes?.length !== 0;
     delete v.likes;
 
     if (!!session)

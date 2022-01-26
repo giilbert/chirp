@@ -154,8 +154,6 @@ function RecentChirps({
   const [ref, inView] = useInView({ threshold: 0.5, delay: 10 });
   const [theEnd, setTheEnd] = useState(!!data.theEnd);
 
-  console.log(persistantData);
-
   if (inView) {
     fetcher(`/api/getRecentChirps?offset=${(offset + 1) * 10}`).then((data) => {
       // when every recent post is grabbed

@@ -15,8 +15,6 @@ function Chirp({
   const date = new Date(createdAt);
   const [likes, setLikes] = useState(numLikes);
 
-  console.log(liked);
-
   return (
     <Box borderWidth="1px" p="4" mb="2">
       <Flex>

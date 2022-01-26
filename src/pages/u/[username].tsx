@@ -102,7 +102,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
         orderBy: {
           createdAt: 'desc',
         },
-        include: {
+        include: !!session && {
           likes: {
             where: {
               userId: session.user.id,
@@ -126,11 +126,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     // @ts-ignore
     v.createdAt = v.createdAt.getTime();
 
-    v.liked = v.likes.length !== 0;
+    if (!!session) v.liked = v.likes?.length !== 0;
     delete v.likes;
   });
-
-  console.log(user);
 
   await prisma.$disconnect();
 

@@ -1,16 +1,21 @@
 import { Box, Center, Container, Flex, Heading } from '@chakra-ui/react';
-import { Chirp, PrismaClient } from '@prisma/client';
+import { Chirp, Like, PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import ChirpCard from '@components/Chirp';
 import { ChevronLeftIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
+import { getSession } from 'next-auth/react';
+import { SessionWithUserId } from 'pages/api/auth/[...nextauth]';
 
 // TODO: reorder this mess
 interface UserAndChirpType {
   username: string;
   name: string;
   // override the createdAt property of Chirp to become a number
-  chirps: (Omit<Chirp, 'createdAt'> & { createdAt: number })[];
+  chirps: (Omit<Chirp, 'createdAt'> & {
+    createdAt: number;
+    liked: boolean;
+  })[];
 }
 
 interface PageProps {
@@ -61,6 +66,8 @@ function UserChirps({
                 id: chirp.authorId,
               },
               createdAt: chirp.createdAt as number,
+              liked: chirp.liked,
+              numLikes: chirp.numLikes,
             }}
           />
         );
@@ -73,7 +80,9 @@ const prisma = new PrismaClient();
 export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   query,
   res,
+  req,
 }) => {
+  const session = (await getSession({ req })) as SessionWithUserId;
   res.setHeader(
     'Cache-Control',
     'public, s-maxage=10, stale-while-revalidate=59'
@@ -93,6 +102,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          likes: {
+            where: {
+              userId: session.user.id,
+            },
+          },
+        },
       },
     },
   })) as {
@@ -100,6 +116,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     name: string;
     chirps: (Chirp & {
       createdAt: number;
+      likes: Like[];
+      liked: boolean;
     })[];
   };
 
@@ -107,7 +125,12 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     // nextjs cant serialize Date
     // @ts-ignore
     v.createdAt = v.createdAt.getTime();
+
+    v.liked = v.likes.length !== 0;
+    delete v.likes;
   });
+
+  console.log(user);
 
   await prisma.$disconnect();
 

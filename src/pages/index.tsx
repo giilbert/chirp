@@ -31,10 +31,9 @@ interface PageProps {
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 function IndexPage({ session }: PageProps) {
-  const { data: recentChirps, error } = useSwr<Chirp[]>(
-    '/api/getRecentChirps',
-    fetcher
-  );
+  const { data: recentChirps, error } = useSwr<
+    { theEnd: boolean; chirps: Chirp[] } & Chirp[]
+  >('/api/getRecentChirps', fetcher);
 
   // user signed in
   return (
@@ -143,11 +142,17 @@ function CreateChirp() {
 }
 
 let offset = 0;
-function RecentChirps({ data }: { data: Chirp[] }) {
+function RecentChirps({
+  data,
+}: {
+  data: { theEnd: boolean; chirps: Chirp[] } & Chirp[];
+}) {
   // the chirps, PLUS all the chirps fetched after
-  const [persistantData, setPersistantData] = useState(data);
+  const [persistantData, setPersistantData] = useState(
+    data.theEnd ? data.chirps : data
+  );
   const [ref, inView] = useInView({ threshold: 0.5, delay: 10 });
-  const [theEnd, setTheEnd] = useState(false);
+  const [theEnd, setTheEnd] = useState(!!data.theEnd);
 
   console.log(persistantData);
 

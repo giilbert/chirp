@@ -1,8 +1,11 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import { SessionProvider } from 'next-auth/react';
+import { getSession, SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
 import { AnimatePresence, motion } from 'framer-motion';
 import '../utils/global.css';
+import Navbar from '@components/Navbar';
+import { GetServerSideProps } from 'next';
+import { SessionWithUserId } from './api/auth/[...nextauth]';
 
 function App({ Component, pageProps, router }: AppProps) {
   return (
@@ -32,9 +35,11 @@ function App({ Component, pageProps, router }: AppProps) {
         }}
         key={router.route}
       >
-        <ChakraProvider>
-          <Component {...pageProps}></Component>
-        </ChakraProvider>
+        <SessionProvider session={pageProps.session}>
+          <ChakraProvider>
+            <Component {...pageProps}></Component>
+          </ChakraProvider>
+        </SessionProvider>
       </motion.div>
     </AnimatePresence>
   );

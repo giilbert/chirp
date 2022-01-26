@@ -6,6 +6,7 @@ import { ChevronLeftIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
 import { getSession } from 'next-auth/react';
 import { SessionWithUserId } from 'pages/api/auth/[...nextauth]';
+import Navbar from '@components/Navbar';
 
 // TODO: reorder this mess
 interface UserAndChirpType {
@@ -26,6 +27,8 @@ function UserPage({ user }: PageProps) {
   return (
     <Center>
       <Container width="500px" mt="50px">
+        <Navbar />
+
         <Link href="/">
           <Flex>
             <ChevronLeftIcon />
@@ -135,6 +138,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   return {
     props: {
       user,
+      session,
     },
   };
 };

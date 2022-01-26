@@ -23,6 +23,7 @@ import { Chirp } from '../utils/types/Chirp';
 import useSwr from 'swr';
 import { UseSessionReturn } from 'utils/types/Session';
 import { useInView } from 'react-intersection-observer';
+import Navbar from '@components/Navbar';
 
 interface PageProps {
   session: SessionWithUserId;
@@ -39,19 +40,9 @@ function IndexPage({ session }: PageProps) {
   return (
     <Center>
       <Container width="500px" mt="50px">
-        {session ? (
-          <>
-            <Text fontSize="xl">
-              Signed in as <b>{session.user.name}</b>
-            </Text>
-            <Button onClick={() => signOut()}>Sign out</Button>
-            <CreateChirp />
-          </>
-        ) : (
-          <Link href="/login">
-            <Button>Login</Button>
-          </Link>
-        )}
+        <Navbar />
+
+        {session && <CreateChirp />}
 
         {error && <Text>An error occured.</Text>}
 

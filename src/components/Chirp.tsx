@@ -2,7 +2,8 @@ import { Box, Flex, Text, useToast } from '@chakra-ui/react';
 import { Chirp as ChirpProps } from '../utils/types/Chirp';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { debounce, throttle } from 'lodash';
 
 function Chirp({
   author,
@@ -59,6 +60,8 @@ const heartIconVariants: Variants = {
   },
 };
 
+let isInCooldown = false;
+
 function HeartIcon({
   hasUserLiked,
   chirpId,
@@ -90,6 +93,19 @@ function HeartIcon({
         duration: 3000,
       });
     }
+
+    if (isInCooldown) {
+      errorToast({
+        title: "You're liking too fast!",
+        status: 'warning',
+        isClosable: true,
+        duration: 3000,
+      });
+      return;
+    }
+
+    isInCooldown = true;
+    setTimeout(() => (isInCooldown = false), 2000);
 
     if (liked === false) {
       setLiked(true);

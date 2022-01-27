@@ -39,7 +39,7 @@ function IndexPage({ session }: PageProps) {
   // user signed in
   return (
     <Center>
-      <Container width="600px" mt="50px">
+      <Container maxWidth="600px" mt="50px">
         <Navbar />
 
         {session && <CreateChirp />}

@@ -1,6 +1,4 @@
 import {
-  useDisclosure,
-  Box,
   Button,
   Modal,
   ModalOverlay,
@@ -9,7 +7,9 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  Text,
   useColorMode,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { useRef } from 'react';
 
@@ -30,6 +30,7 @@ function Settings() {
           <ModalCloseButton />
           <ModalBody onClick={toggleColorMode}>
             <Button>Switch color theme</Button>
+            <Text mt="5">heheheheh this settings modal is kind of empty</Text>
           </ModalBody>
 
           <ModalFooter>

@@ -26,15 +26,9 @@ interface PageProps {
 function UserPage({ user }: PageProps) {
   return (
     <Center>
-      <Container width="600px" mt="75px">
+      <Container maxWidth="600px" mt="75px">
         <Navbar />
 
-        <Link href="/">
-          <Flex>
-            <ChevronLeftIcon />
-            Home
-          </Flex>
-        </Link>
         <Flex>
           <Heading>{user.name}</Heading>
           <Heading fontWeight="light" colorScheme="gray" pl="2">

@@ -18,7 +18,7 @@ import * as Yup from 'yup';
 function LoginPage() {
   return (
     <Center>
-      <Container width="500px" mt="50px">
+      <Container width="600px" mt="50px">
         <Heading>Login</Heading>
         <Divider my="20px" />
         <LoginForm />

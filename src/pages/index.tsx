@@ -39,7 +39,7 @@ function IndexPage({ session }: PageProps) {
   // user signed in
   return (
     <Center>
-      <Container width="500px" mt="50px">
+      <Container width="600px" mt="50px">
         <Navbar />
 
         {session && <CreateChirp />}
@@ -50,7 +50,9 @@ function IndexPage({ session }: PageProps) {
           // <Box padding="4" bg="white">
           //   <SkeletonText mt="4" noOfLines={5} spacing="4" />
           // </Box>
-          <Spinner />
+          <Center mt="10">
+            <Spinner />
+          </Center>
         ) : (
           <RecentChirps data={recentChirps} />
         )}
@@ -114,7 +116,7 @@ function CreateChirp() {
               onChange={(e) => {
                 setFieldValue('content', e.target.value, false);
                 // also update the counter
-                setValue(e.target.value);
+                setValue(e.target.value.substring(0, maxLength));
               }}
             />
             <Text color="gray.400">
@@ -165,7 +167,11 @@ function RecentChirps({
         return <ChirpCard key={i} {...chirp} />;
       })}
 
-      {!theEnd && <Spinner ref={ref} />}
+      {!theEnd && (
+        <Center>
+          <Spinner ref={ref} />
+        </Center>
+      )}
     </Box>
   );
 }

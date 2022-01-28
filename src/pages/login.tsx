@@ -7,11 +7,13 @@ import {
   Input,
   InputGroup,
   Text,
+  Link,
 } from '@chakra-ui/react';
 import { Form, Formik, FormikProps } from 'formik';
 import { GetServerSideProps } from 'next';
 import { getSession, signIn } from 'next-auth/react';
 import { useState } from 'react';
+import NextLink from 'next/link';
 import * as Yup from 'yup';
 
 function LoginPage() {
@@ -87,9 +89,20 @@ const LoginForm = () => {
 
           <Text colorScheme="red">{formError}</Text>
 
-          <Button type="submit" colorScheme="blue" isLoading={isSubmitting}>
+          <Button
+            type="submit"
+            colorScheme="blue"
+            isLoading={isSubmitting}
+            mb="2"
+          >
             Login
           </Button>
+
+          <br />
+
+          <NextLink href="/register" passHref>
+            <Link color="cyan.400">Don't have an account? Register</Link>
+          </NextLink>
         </Form>
       )}
     </Formik>

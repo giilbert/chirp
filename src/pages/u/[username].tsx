@@ -12,8 +12,10 @@ import ChirpCard from '@components/Chirp';
 import { getSession } from 'next-auth/react';
 import { SessionWithUserId } from 'pages/api/auth/[...nextauth]';
 import Navbar from '@components/Navbar';
+import Head from 'next/head';
 
 // TODO: reorder this mess
+// TODO: not found error handling
 interface UserAndChirpType {
   username: string;
   name: string;
@@ -31,6 +33,11 @@ interface PageProps {
 function UserPage({ user }: PageProps) {
   return (
     <Center>
+      <Head>
+        <title>
+          {user.name} (@{user.username}) on Chirp
+        </title>
+      </Head>
       <Container maxWidth="600px" mt="75px">
         <Navbar />
 

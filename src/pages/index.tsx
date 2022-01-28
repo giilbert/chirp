@@ -21,6 +21,7 @@ import { Chirp } from '../utils/types/Chirp';
 import useSwr from 'swr';
 import { useInView } from 'react-intersection-observer';
 import Navbar from '@components/Navbar';
+import Head from 'next/head';
 
 interface PageProps {
   session: SessionWithUserId;
@@ -36,6 +37,13 @@ function IndexPage({ session }: PageProps) {
   // user signed in
   return (
     <Center>
+      <Head>
+        <title>Chirp</title>
+        <meta
+          name="description"
+          content="Chirp Chirp Chirp Chirp Chirp Chirp"
+        />
+      </Head>
       <Container maxWidth="600px" mt="50px">
         <Navbar />
 

@@ -1,8 +1,10 @@
-import { Box, Flex, Text, useToast } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Text, useToast } from '@chakra-ui/react';
 import { Chirp as ChirpProps } from '../utils/types/Chirp';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
 import { Dispatch, SetStateAction, useState } from 'react';
+
+const AnimatedBox = motion<BoxProps>(Box);
 
 function Chirp({
   author,
@@ -16,39 +18,50 @@ function Chirp({
   const [likes, setLikes] = useState(numLikes);
 
   return (
-    <Box borderWidth="1px" p="4" mb="2">
-      <Flex>
-        <Link href={`/u/${author.username}`}>
-          <Flex
-            _hover={{
-              textDecoration: 'underline',
-              cursor: 'pointer',
-            }}
-          >
-            <Text>{author.name}</Text>
-            <Text color="gray" display="inline-block">
-              @{author.username}
-            </Text>
-          </Flex>
-        </Link>
-        <Text color="gray" pl="2">
-          {date.toLocaleString('en-us', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })}
-        </Text>
-      </Flex>
+    <Link href={`/c/${id}`}>
+      <AnimatedBox
+        borderWidth="1px"
+        p="4"
+        mb="2"
+        whileHover={{
+          scale: 1.1,
+          cursor: 'pointer',
+          boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <Flex>
+          <Link href={`/u/${author.username}`}>
+            <Flex
+              _hover={{
+                textDecoration: 'underline',
+                cursor: 'pointer',
+              }}
+            >
+              <Text>{author.name}</Text>
+              <Text color="gray" display="inline-block">
+                @{author.username}
+              </Text>
+            </Flex>
+          </Link>
+          <Text color="gray" pl="2">
+            {date.toLocaleString('en-us', {
+              month: 'short',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+            })}
+          </Text>
+        </Flex>
 
-      {/* by default, content is URI encoded */}
-      <ContentDisplay content={content} />
+        {/* by default, content is URI encoded */}
+        <ContentDisplay content={content} />
 
-      <Flex>
-        <HeartIcon hasUserLiked={liked} chirpId={id} setLikes={setLikes} />
-        <Text>{likes}</Text>
-      </Flex>
-    </Box>
+        <Flex>
+          <HeartIcon hasUserLiked={liked} chirpId={id} setLikes={setLikes} />
+          <Text>{likes}</Text>
+        </Flex>
+      </AnimatedBox>
+    </Link>
   );
 }
 

@@ -104,7 +104,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   // @ts-ignore
   chirp.createdAt = chirp.createdAt.getTime();
   // @ts-ignore
-  chirp.liked = chirp.likes?.length !== 0;
+  if (session) chirp.liked = chirp.likes?.length !== 0;
 
   delete chirp.likes;
 

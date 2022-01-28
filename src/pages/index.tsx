@@ -49,7 +49,7 @@ function IndexPage({ session }: PageProps) {
 
         {session && <CreateChirp />}
 
-        <Heading>Recent Chirps</Heading>
+        <Heading mt={!session && '10'}>Recent Chirps</Heading>
 
         {error && <Text>An error occured.</Text>}
 

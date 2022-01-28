@@ -1,4 +1,4 @@
-import { Box, BoxProps, Flex, Text, useToast } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Text, useToast, VStack } from '@chakra-ui/react';
 import { Chirp as ChirpProps } from '../utils/types/Chirp';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
@@ -18,45 +18,46 @@ function Chirp({
   const [likes, setLikes] = useState(numLikes);
 
   return (
-    <Link href={`/c/${id}`}>
-      <AnimatedBox
-        borderWidth="1px"
-        p="4"
-        mb="2"
-        whileHover={{
-          scale: 1.1,
-          cursor: 'pointer',
-          boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <Flex>
-          <Link href={`/u/${author.username}`}>
-            <Flex
-              _hover={{
-                textDecoration: 'underline',
-                cursor: 'pointer',
-              }}
-            >
-              <Text>{author.name}</Text>
-              <Text color="gray" display="inline-block">
-                @{author.username}
-              </Text>
-            </Flex>
-          </Link>
-          <Text color="gray" pl="2">
-            {formatDate(date)}
-          </Text>
-        </Flex>
+    <AnimatedBox
+      borderWidth="1px"
+      p="4"
+      mb="2"
+      whileHover={{
+        scale: 1.1,
+        cursor: 'pointer',
+        boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <Link href={`/c/${id}`}>
+        <VStack alignItems="flex-start">
+          <Flex>
+            <Link href={`/u/${author.username}`}>
+              <Flex
+                _hover={{
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+              >
+                <Text>{author.name}</Text>
+                <Text color="gray" display="inline-block">
+                  @{author.username}
+                </Text>
+              </Flex>
+            </Link>
+            <Text color="gray" pl="2">
+              {formatDate(date)}
+            </Text>
+          </Flex>
 
-        {/* by default, content is URI encoded */}
-        <ContentDisplay content={content} />
+          <ContentDisplay content={content} />
+        </VStack>
+      </Link>
 
-        <Flex>
-          <HeartIcon hasUserLiked={liked} chirpId={id} setLikes={setLikes} />
-          <Text>{likes}</Text>
-        </Flex>
-      </AnimatedBox>
-    </Link>
+      <Flex>
+        <HeartIcon hasUserLiked={liked} chirpId={id} setLikes={setLikes} />
+        <Text ml="2">{likes}</Text>
+      </Flex>
+    </AnimatedBox>
   );
 }
 
@@ -202,7 +203,12 @@ function ContentDisplay({ content }: { content: string }) {
     const tokens = line.split(hashtagRegex);
 
     return (
-      <span>
+      <span
+        style={{
+          overflowWrap: 'anywhere',
+          hyphens: 'manual',
+        }}
+      >
         {tokens.map((v, i) => {
           if (v.charAt(0) === '#') {
             return (

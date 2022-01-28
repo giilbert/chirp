@@ -5,6 +5,8 @@
   "main": "src/index.tsx",
   "scripts": {
     "dev": "next dev",
+    "start": "next start",
+    "build": "yarn generate && next build",
     "generate": "yarn prisma generate"
   },
   "repository": {
@@ -24,12 +26,6 @@
   },
   "homepage": "https://github.com/giilbert/chirp#readme",
   "dependencies": {
-    "@chakra-ui/icons": "^1.1.1",
-    "@chakra-ui/react": "^1.7.4",
-    "@emotion/react": "^11.7.1",
-    "@emotion/styled": "^11.6.0",
-    "@prisma/client": "^3.8.1",
-    "@types/bcrypt": "^5.0.0",
     "bcrypt": "^5.0.1",
     "formik": "^2.2.9",
     "framer-motion": "^6.2.1",
@@ -42,6 +38,12 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@chakra-ui/icons": "^1.1.1",
+    "@chakra-ui/react": "^1.7.4",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@prisma/client": "^3.8.1",
+    "@types/bcrypt": "^5.0.0",
     "@types/react": "^17.0.38",
     "prisma": "^3.8.1",
     "typescript": "^4.5.5"

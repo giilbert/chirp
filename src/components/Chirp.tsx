@@ -39,7 +39,7 @@ function Chirp({
                 }}
               >
                 <Text>{author.name}</Text>
-                <Text color="gray" display="inline-block">
+                <Text color="gray" display="inline-block" ml="1">
                   @{author.username}
                 </Text>
               </Flex>

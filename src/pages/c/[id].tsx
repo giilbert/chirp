@@ -72,33 +72,43 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   await prisma.$connect();
 
-  const chirp = (await prisma.chirp.findFirst({
-    where: {
-      id: query.id as string,
-    },
-    include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          username: true,
-        },
-      },
-      likes: !!session && {
-        where: {
-          userId: session.user.id,
-        },
-      },
-    },
-  })) as Chirp & {
-    author: {
-      id: string;
-      name: string;
-      username: string;
-    };
+  let chirp: Chirp & {
+    author: { id: string; name: string; username: string };
     likes: Like[];
     liked: boolean;
   };
+  // handle malformed urls
+  try {
+    chirp = (await prisma.chirp.findFirst({
+      where: {
+        id: query.id as string,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+          },
+        },
+        likes: !!session && {
+          where: {
+            userId: session.user.id,
+          },
+        },
+      },
+    })) as typeof chirp;
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
+
+  if (!chirp) {
+    return {
+      notFound: true,
+    };
+  }
 
   // nextjs cant serialize json
   // @ts-ignore

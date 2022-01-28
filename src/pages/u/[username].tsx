@@ -103,29 +103,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   await prisma.$connect();
 
-  const user = (await prisma.user.findUnique({
-    where: {
-      username: query.username as string,
-    },
-    select: {
-      username: true,
-      name: true,
-      chirps: {
-        take: 10,
-        orderBy: {
-          createdAt: 'desc',
-        },
-        // only include likes if the user is signed in
-        include: !!session && {
-          likes: {
-            where: {
-              userId: session.user.id,
-            },
-          },
-        },
-      },
-    },
-  })) as {
+  let user: {
     username: string;
     name: string;
     chirps: (Chirp & {
@@ -134,6 +112,42 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       liked: boolean;
     })[];
   };
+  // handle malformed urls
+  try {
+    user = (await prisma.user.findUnique({
+      where: {
+        username: query.username as string,
+      },
+      select: {
+        username: true,
+        name: true,
+        chirps: {
+          take: 10,
+          orderBy: {
+            createdAt: 'desc',
+          },
+          // only include likes if the user is signed in
+          include: !!session && {
+            likes: {
+              where: {
+                userId: session.user.id,
+              },
+            },
+          },
+        },
+      },
+    })) as typeof user;
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
+
+  if (!user) {
+    return {
+      notFound: true,
+    };
+  }
 
   user.chirps.forEach((v) => {
     // nextjs cant serialize Date

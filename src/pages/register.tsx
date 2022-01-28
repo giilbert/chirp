@@ -6,10 +6,9 @@ import {
   Heading,
   Input,
   InputGroup,
-  Spinner,
   Text,
 } from '@chakra-ui/react';
-import { Form, Formik, FormikProps, yupToFormErrors } from 'formik';
+import { Form, Formik, FormikProps } from 'formik';
 import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 import * as Yup from 'yup';

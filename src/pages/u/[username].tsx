@@ -1,9 +1,14 @@
-import { Box, Center, Container, Flex, Heading } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Container,
+  Divider,
+  Flex,
+  Heading,
+} from '@chakra-ui/react';
 import { Chirp, Like, PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import ChirpCard from '@components/Chirp';
-import { ChevronLeftIcon } from '@chakra-ui/icons';
-import Link from 'next/link';
 import { getSession } from 'next-auth/react';
 import { SessionWithUserId } from 'pages/api/auth/[...nextauth]';
 import Navbar from '@components/Navbar';
@@ -35,6 +40,10 @@ function UserPage({ user }: PageProps) {
             @{user.username}
           </Heading>
         </Flex>
+
+        <Divider my="10" />
+
+        <Heading>{user.name}'s Recent Chirps</Heading>
 
         <UserChirps data={user} />
       </Container>
@@ -99,6 +108,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
         orderBy: {
           createdAt: 'desc',
         },
+        // only include likes if the user is signed in
         include: !!session && {
           likes: {
             where: {

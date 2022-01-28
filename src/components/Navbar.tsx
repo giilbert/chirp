@@ -1,15 +1,8 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
 import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Button,
   Flex,
-  Menu,
-  MenuButton,
-  MenuItem,
   Text,
   useColorMode,
   useColorModeValue,
@@ -20,7 +13,6 @@ import { motion } from 'framer-motion';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { UseSessionReturn } from 'utils/types/Session';
 import Settings from './Settings';
 

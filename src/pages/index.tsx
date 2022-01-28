@@ -6,22 +6,19 @@ import {
   Textarea,
   Box,
   TextareaProps,
-  SkeletonText,
   Spinner,
+  Heading,
 } from '@chakra-ui/react';
 import { Form, Formik, FormikProps } from 'formik';
-import { motion, useViewportScroll } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { GetServerSideProps } from 'next';
-import { getSession, signOut, useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { MutableRefObject, useMemo, useRef, useState } from 'react';
+import { getSession } from 'next-auth/react';
+import { useState } from 'react';
 import { SessionWithUserId } from './api/auth/[...nextauth]';
 import * as Yup from 'yup';
-import { PrismaClient } from '@prisma/client';
 import ChirpCard from '@components/Chirp';
 import { Chirp } from '../utils/types/Chirp';
 import useSwr from 'swr';
-import { UseSessionReturn } from 'utils/types/Session';
 import { useInView } from 'react-intersection-observer';
 import Navbar from '@components/Navbar';
 
@@ -44,12 +41,11 @@ function IndexPage({ session }: PageProps) {
 
         {session && <CreateChirp />}
 
+        <Heading>Recent Chirps</Heading>
+
         {error && <Text>An error occured.</Text>}
 
         {!recentChirps ? (
-          // <Box padding="4" bg="white">
-          //   <SkeletonText mt="4" noOfLines={5} spacing="4" />
-          // </Box>
           <Center mt="10">
             <Spinner />
           </Center>

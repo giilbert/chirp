@@ -2,8 +2,7 @@ import { Box, Flex, Text, useToast } from '@chakra-ui/react';
 import { Chirp as ChirpProps } from '../utils/types/Chirp';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
-import { debounce, throttle } from 'lodash';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 function Chirp({
   author,

@@ -44,12 +44,7 @@ function Chirp({
             </Flex>
           </Link>
           <Text color="gray" pl="2">
-            {date.toLocaleString('en-us', {
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric',
-            })}
+            {formatDate(date)}
           </Text>
         </Flex>
 
@@ -64,6 +59,35 @@ function Chirp({
     </Link>
   );
 }
+
+function dateDiffInDays(a: Date, b: Date) {
+  // Discard the time and time-zone information.
+  const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+  return Math.floor((utc2 - utc1) / (1000 * 60 * 60 * 24));
+}
+
+const formatDate = (date: Date) => {
+  const diff = dateDiffInDays(new Date(), date);
+
+  if (diff < -7)
+    return date.toLocaleString('en-us', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    });
+
+  // return the date in "x days ago" format
+  if (diff === 0)
+    return `Today at ${date.toLocaleTimeString('en-us', {
+      hour: 'numeric',
+      minute: 'numeric',
+    })}`;
+
+  return `${Math.abs(diff)} ${diff === -1 ? 'day' : 'days'} ago`;
+};
 
 const heartIconVariants: Variants = {
   hover: {

@@ -1,5 +1,7 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Link,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -10,6 +12,7 @@ import {
   Text,
   useColorMode,
   useDisclosure,
+  VStack,
 } from '@chakra-ui/react';
 import { useRef } from 'react';
 
@@ -28,9 +31,19 @@ function Settings() {
         <ModalContent>
           <ModalHeader>Settings</ModalHeader>
           <ModalCloseButton />
-          <ModalBody onClick={toggleColorMode}>
-            <Button>Switch color theme</Button>
-            <Text mt="5">heheheheh this settings modal is kind of empty</Text>
+          <ModalBody>
+            <VStack alignItems="flex-start">
+              <Button onClick={toggleColorMode}>Switch color theme</Button>
+              <Link
+                href="https://github.com/giilbert/chirp"
+                color="cyan.700"
+                isExternal
+              >
+                This project's GitHub repository <ExternalLinkIcon mx="3" />
+              </Link>
+
+              <Text mt="5">heheheheh this settings modal is kind of empty</Text>
+            </VStack>
           </ModalBody>
 
           <ModalFooter>

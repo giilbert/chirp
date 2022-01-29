@@ -13,19 +13,22 @@ import { Form, Formik, FormikProps } from 'formik';
 import { motion } from 'framer-motion';
 import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SessionWithUserId } from './api/auth/[...nextauth]';
 import * as Yup from 'yup';
 import ChirpCard from '@components/Chirp';
 import { Chirp } from '../utils/types/Chirp';
-import useSwr from 'swr';
+import useSwr, { useSWRConfig } from 'swr';
 import { useInView } from 'react-intersection-observer';
 import Navbar from '@components/Navbar';
 import Head from 'next/head';
+import { EventEmitter } from 'events';
 
 interface PageProps {
   session: SessionWithUserId;
 }
+
+const chirpDisplayListener = new EventEmitter();
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -87,14 +90,18 @@ function CreateChirp() {
         }}
         validationSchema={schema}
         onSubmit={(values, helpers) => {
+          // TODO: error handling (toast)
           fetch('/api/createChirp', {
             method: 'POST',
             body: JSON.stringify(values),
             headers: {
               'Content-Type': 'application/json',
             },
-          }).then((res) => {
+          }).then(async (res) => {
             if (res.ok) {
+              const newChirp = (await res.json()) as Chirp;
+              chirpDisplayListener.emit('add-chirp', newChirp);
+
               helpers.resetForm();
               setValue('');
             }
@@ -150,6 +157,15 @@ function RecentChirps({
   );
   const [ref, inView] = useInView({ threshold: 0.5, delay: 10 });
   const [theEnd, setTheEnd] = useState(!!data.theEnd);
+
+  useEffect(() => {
+    chirpDisplayListener.on('add-chirp', (chirp) => {
+      // add the just-created chirp to the beginning of the existing data
+      setPersistantData((existingData) => {
+        return [chirp, ...existingData];
+      });
+    });
+  }, []);
 
   if (inView) {
     fetcher(`/api/getRecentChirps?offset=${(offset + 1) * 10}`).then((data) => {

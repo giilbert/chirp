@@ -31,15 +31,24 @@ export default async function handler(
 
   await prisma.$connect();
 
-  await prisma.chirp.create({
+  const chirp = await prisma.chirp.create({
     data: {
       // replace multiple new lines, max of one empty line
       content: data.content.replace(/[\n]{3,}/g, '\n\n'),
       authorId: session.user.id,
     },
+    include: {
+      author: {
+        select: {
+          likes: true,
+          name: true,
+          username: true,
+        },
+      },
+    },
   });
 
   await prisma.$disconnect();
 
-  res.status(200).end();
+  res.status(200).json(chirp);
 }

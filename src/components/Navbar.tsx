@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Flex,
+  HStack,
   Text,
   useColorMode,
   useColorModeValue,
@@ -15,6 +16,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { UseSessionReturn } from 'utils/types/Session';
 import Settings from './Settings';
+import styles from './Navbar.module.css';
 
 function Navbar() {
   const { colorMode } = useColorMode();
@@ -32,7 +34,7 @@ function Navbar() {
       backgroundColor={color}
       py="3"
     >
-      <Flex alignItems="center" justifyContent="center" top="0" px="3">
+      <Flex alignItems="center" top="0" px="3" className={styles.container}>
         {smallerThan600 && (
           <Button
             onClick={isOpen ? onClose : onOpen}
@@ -40,33 +42,34 @@ function Navbar() {
             as={HamburgerIcon}
           ></Button>
         )}
+        <HStack width="568px">
+          <Link href="/">
+            <motion.div
+              whileHover={{
+                scale: 1.2,
+                cursor: 'pointer',
+              }}
+            >
+              {colorMode === 'light' ? (
+                <Image
+                  src="/chirp_logo_black.svg"
+                  width="96.75"
+                  height="46.25"
+                  priority
+                />
+              ) : (
+                <Image
+                  src="/chirp_logo_white.svg"
+                  width="96.75"
+                  height="46.25"
+                  priority
+                />
+              )}
+            </motion.div>
+          </Link>
 
-        <Link href="/">
-          <motion.div
-            whileHover={{
-              scale: 1.2,
-              cursor: 'pointer',
-            }}
-          >
-            {colorMode === 'light' ? (
-              <Image
-                src="/chirp_logo_black.svg"
-                width="96.75"
-                height="46.25"
-                priority
-              />
-            ) : (
-              <Image
-                src="/chirp_logo_white.svg"
-                width="96.75"
-                height="46.25"
-                priority
-              />
-            )}
-          </motion.div>
-        </Link>
-
-        {!smallerThan600 && <AccountMenu />}
+          {!smallerThan600 && <AccountMenu />}
+        </HStack>
       </Flex>
       {isOpen && smallerThan600 && (
         <Box mt="8">

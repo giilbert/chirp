@@ -1,44 +1,41 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
-import { AnimatePresence, motion } from 'framer-motion';
-import '../utils/global.css';
+import { useRouter } from 'next/router';
+import { SessionProvider } from 'next-auth/react';
+import NProgress from 'nprogress';
+import { useEffect } from 'react';
 
-function App({ Component, pageProps, router }: AppProps) {
+import '../utils/global.css';
+import '../utils/nprogress.css';
+
+function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const NPStart = () => {
+      NProgress.start();
+    };
+    const NPEnd = () => {
+      NProgress.done();
+    };
+
+    router.events.on('routeChangeStart', NPStart);
+    router.events.on('routeChangeComplete', NPEnd);
+    router.events.on('routeChangeError', NPEnd);
+
+    return () => {
+      router.events.off('routeChangeStart', NPStart);
+      router.events.off('routeChangeComplete', NPEnd);
+      router.events.off('routeChangeError', NPEnd);
+    };
+  }, [router]);
+
   return (
-    <AnimatePresence exitBeforeEnter>
-      <motion.div
-        initial="pageInitial"
-        animate="pageAnimate"
-        variants={{
-          pageInitial: {
-            x: -50,
-            opacity: 0,
-          },
-          pageAnimate: {
-            x: 0,
-            opacity: 1,
-            transition: {
-              ease: 'easeOut',
-            },
-          },
-        }}
-        exit={{
-          x: 50,
-          opacity: 0,
-          transition: {
-            ease: 'easeOut',
-          },
-        }}
-        key={router.route}
-      >
-        <SessionProvider session={pageProps.session}>
-          <ChakraProvider>
-            <Component {...pageProps}></Component>
-          </ChakraProvider>
-        </SessionProvider>
-      </motion.div>
-    </AnimatePresence>
+    <SessionProvider session={pageProps.session}>
+      <ChakraProvider>
+        <Component {...pageProps}></Component>
+      </ChakraProvider>
+    </SessionProvider>
   );
 }
 

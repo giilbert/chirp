@@ -59,14 +59,6 @@ export default async function handler(
     return v;
   });
 
-  if (chirps.length < 10) {
-    res.json({
-      chirps,
-      theEnd: true,
-    });
-    return;
-  }
-
   res.json(chirps);
 
   await prisma.$disconnect();

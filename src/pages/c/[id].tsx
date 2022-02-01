@@ -15,6 +15,7 @@ interface PageProps {
       id: string;
       name: string;
       username: string;
+      pfpUrl: string;
     };
     likes: Like[];
     liked: boolean;
@@ -73,7 +74,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   await prisma.$connect();
 
   let chirp: Chirp & {
-    author: { id: string; name: string; username: string };
+    author: { id: string; name: string; username: string; pfpUrl: string };
     likes: Like[];
     liked: boolean;
   };
@@ -89,6 +90,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
             id: true,
             name: true,
             username: true,
+            pfpUrl: true,
           },
         },
         likes: !!session && {

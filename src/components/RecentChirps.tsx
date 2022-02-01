@@ -24,7 +24,7 @@ function RecentChirps() {
     (i) => `${RECENT_CHIRPS_ENDPOINT}?offset=${i * CHIRP_CHUNK_SIZE}`,
     fetcher,
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
     }
   );
 
@@ -61,7 +61,6 @@ function RecentChirps() {
       {!isReachedEnd ? (
         <InView
           onChange={(inView) => {
-            console.log('inView: ' + inView);
             if (inView) setSize((s) => s + 1);
           }}
         >

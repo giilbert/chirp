@@ -4,6 +4,7 @@ interface Chirp {
     id: string;
     name: string;
     username: string;
+    pfpUrl: string;
   };
   content: string;
   id: string;

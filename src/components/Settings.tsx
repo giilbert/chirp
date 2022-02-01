@@ -14,12 +14,18 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { useSession } from 'next-auth/react';
 import { useRef } from 'react';
+import { UseSessionReturn } from 'utils/types/Session';
+import ProfilePictureModal from './ProfilePictureModal';
 
 function Settings() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { toggleColorMode } = useColorMode();
   const finalRef = useRef();
+  const { data: session } = useSession({
+    required: false,
+  }) as UseSessionReturn;
 
   return (
     <>
@@ -34,6 +40,7 @@ function Settings() {
           <ModalBody>
             <VStack alignItems="flex-start">
               <Button onClick={toggleColorMode}>Switch color theme</Button>
+              {session && <ProfilePictureModal />}
               <Link
                 href="https://github.com/giilbert/chirp"
                 color="cyan.700"

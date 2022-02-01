@@ -16,6 +16,7 @@ model User {
   password  String
   chirps    Chirp[]
   likes     Like[]
+  pfpUrl    String   @default("/defaultpfp.png")
 }
 
 model Chirp {

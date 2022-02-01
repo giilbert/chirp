@@ -29,6 +29,7 @@ export default async function handler(
             name: true,
             username: true,
             id: true,
+            pfpUrl: true,
           },
         },
         authorId: true,

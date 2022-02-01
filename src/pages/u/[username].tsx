@@ -19,6 +19,7 @@ import Head from 'next/head';
 interface UserAndChirpType {
   username: string;
   name: string;
+  pfpUrl: string;
   // override the createdAt property of Chirp to become a number
   chirps: (Omit<Chirp, 'createdAt'> & {
     createdAt: number;
@@ -59,7 +60,7 @@ function UserPage({ user }: PageProps) {
 }
 
 function UserChirps({
-  data: { chirps, name, username },
+  data: { chirps, name, username, pfpUrl },
 }: {
   data: UserAndChirpType;
 }) {
@@ -76,6 +77,7 @@ function UserChirps({
               author: {
                 name,
                 username,
+                pfpUrl,
                 id: chirp.authorId,
               },
               createdAt: chirp.createdAt as number,
@@ -106,6 +108,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   let user: {
     username: string;
     name: string;
+    pfpUrl: string;
     chirps: (Chirp & {
       createdAt: number;
       likes: Like[];
@@ -121,6 +124,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       select: {
         username: true,
         name: true,
+        pfpUrl: true,
         chirps: {
           take: 10,
           orderBy: {

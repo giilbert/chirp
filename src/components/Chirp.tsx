@@ -1,10 +1,20 @@
-import { Box, BoxProps, Flex, Text, useToast, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Container,
+  Flex,
+  FlexProps,
+  Image,
+  Text,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
 import { Chirp as ChirpProps } from '../utils/types/Chirp';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
 import { Dispatch, SetStateAction, useState } from 'react';
 
-const AnimatedBox = motion<BoxProps>(Box);
+const AnimatedFlex = motion<FlexProps>(Flex);
 
 function Chirp({
   author,
@@ -18,7 +28,7 @@ function Chirp({
   const [likes, setLikes] = useState(numLikes);
 
   return (
-    <AnimatedBox
+    <AnimatedFlex
       borderWidth="1px"
       p="4"
       mb="2"
@@ -28,36 +38,39 @@ function Chirp({
         boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)',
       }}
     >
-      <Link href={`/c/${id}`}>
-        <VStack alignItems="flex-start">
-          <Flex>
-            <Link href={`/u/${author.username}`}>
-              <Flex
-                _hover={{
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
-                }}
-              >
-                <Text>{author.name}</Text>
-                <Text color="gray" display="inline-block" ml="1">
-                  @{author.username}
-                </Text>
-              </Flex>
-            </Link>
-            <Text color="gray" pl="2">
-              {formatDate(date)}
-            </Text>
-          </Flex>
+      <Image src={author.pfpUrl} width="10" height="10" borderRadius="999" />
+      <Container>
+        <Link href={`/c/${id}`}>
+          <VStack alignItems="flex-start">
+            <Flex alignItems="center">
+              <Link href={`/u/${author.username}`}>
+                <Flex
+                  _hover={{
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Text>{author.name}</Text>
+                  <Text color="gray" display="inline-block" ml="1">
+                    @{author.username}
+                  </Text>
+                </Flex>
+              </Link>
+              <Text color="gray" pl="2">
+                {formatDate(date)}
+              </Text>
+            </Flex>
 
-          <ContentDisplay content={content} />
-        </VStack>
-      </Link>
+            <ContentDisplay content={content} />
+          </VStack>
+        </Link>
 
-      <Flex>
-        <HeartIcon hasUserLiked={liked} chirpId={id} setLikes={setLikes} />
-        <Text ml="2">{likes}</Text>
-      </Flex>
-    </AnimatedBox>
+        <Flex mt="2">
+          <HeartIcon hasUserLiked={liked} chirpId={id} setLikes={setLikes} />
+          <Text ml="2">{likes}</Text>
+        </Flex>
+      </Container>
+    </AnimatedFlex>
   );
 }
 

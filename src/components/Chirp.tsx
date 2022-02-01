@@ -42,13 +42,14 @@ function Chirp({
       <Container>
         <Link href={`/c/${id}`}>
           <VStack alignItems="flex-start">
-            <Flex alignItems="center">
+            <Flex alignItems="center" flexWrap="wrap">
               <Link href={`/u/${author.username}`}>
                 <Flex
                   _hover={{
                     textDecoration: 'underline',
                     cursor: 'pointer',
                   }}
+                  mr="2"
                 >
                   <Text>{author.name}</Text>
                   <Text color="gray" display="inline-block" ml="1">
@@ -56,9 +57,7 @@ function Chirp({
                   </Text>
                 </Flex>
               </Link>
-              <Text color="gray" pl="2">
-                {formatDate(date)}
-              </Text>
+              <Text color="gray">{formatDate(date)}</Text>
             </Flex>
 
             <ContentDisplay content={content} />
@@ -218,8 +217,10 @@ function ContentDisplay({ content }: { content: string }) {
     return (
       <span
         style={{
+          wordBreak: 'break-word',
           overflowWrap: 'anywhere',
           hyphens: 'manual',
+          WebkitHyphens: 'manual',
         }}
       >
         {tokens.map((v, i) => {

@@ -23,6 +23,7 @@ function Navbar() {
   const color = useColorModeValue('white', 'gray.800');
   let [smallerThan600] = useMediaQuery('(max-width: 600px)');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const borderColor = useColorModeValue('blackAlpha.400', 'whiteAlpha.400');
 
   return (
     <Box
@@ -72,7 +73,7 @@ function Navbar() {
         </HStack>
       </Flex>
       {isOpen && smallerThan600 && (
-        <Box mt="8">
+        <Box mt="2" borderBottom="1px" pb="10" borderColor={borderColor}>
           <AccountMenu />
         </Box>
       )}
@@ -81,21 +82,24 @@ function Navbar() {
 }
 
 function AccountMenu() {
+  const [smallerThan600] = useMediaQuery('(max-width: 600px)');
   const { data: session } = useSession({
     required: false,
   }) as UseSessionReturn;
 
   return (
-    <Flex ml="5" alignItems="center">
+    <Flex
+      ml="5"
+      alignItems="flex-start"
+      flexDirection={smallerThan600 ? 'column' : 'row'}
+    >
       {session ? (
-        <>
-          <Text fontSize="xl" mx="3">
-            Signed in as <b>{session.user.name}</b>
-          </Text>
-          <Button mr="3" onClick={() => signOut()}>
+        <Text fontSize="xl" ml={!smallerThan600 && '5'}>
+          Signed in as <b>{session.user.name}</b>
+          <Button mx="3" mb="1" onClick={() => signOut()}>
             Sign out
           </Button>
-        </>
+        </Text>
       ) : (
         <Link href="/login">
           <Button mx="3">Login</Button>

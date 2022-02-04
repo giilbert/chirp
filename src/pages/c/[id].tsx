@@ -35,12 +35,7 @@ function UserPage({ chirp }: PageProps) {
           name="description"
           content={`${chirp.content}\n\n${chirp.numLikes} ${
             chirp.numLikes === 1 ? 'Like' : 'Likes'
-          }\nPosted ${new Date(chirp.createdAt).toLocaleString('en-us', {
-            day: 'numeric',
-            month: 'short',
-            hour: 'numeric',
-            minute: 'numeric',
-          })}`}
+          }`}
         />
       </Head>
       <Container maxWidth="600px" mt="75px">

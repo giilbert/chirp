@@ -1,20 +1,18 @@
 import {
-  Box,
   Center,
   Container,
   Divider,
   Flex,
   Heading,
+  Image,
 } from '@chakra-ui/react';
-import { Chirp, Like, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
-import ChirpCard from '@components/Chirp';
 import { getSession } from 'next-auth/react';
 import { SessionWithUserId } from 'pages/api/auth/[...nextauth]';
 import Navbar from '@components/Navbar';
 import Head from 'next/head';
 import RecentChirps from '@components/RecentChirps';
-import { useEffect } from 'react';
 
 interface User {
   id: string;
@@ -35,10 +33,18 @@ function UserPage({ user }: PageProps) {
           {user.name} (@{user.username}) on Chirp
         </title>
       </Head>
-      <Container maxWidth="600px" mt="75px">
+      <Container maxWidth="600px" mt="90px">
         <Navbar />
 
-        <Flex>
+        <Flex alignItems="center">
+          <Image
+            src={user.pfpUrl}
+            width="64px"
+            height="64px"
+            borderRadius="999px"
+            mr="6"
+          />
+
           <Heading>{user.name}</Heading>
           <Heading fontWeight="light" colorScheme="gray" pl="2">
             @{user.username}

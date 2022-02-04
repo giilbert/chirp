@@ -10,6 +10,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+  const authorId = req.query.user ? (req.query.user as string) : undefined;
+
   const session = (await getSession({ req })) as SessionWithUserId;
 
   await prisma.$connect();
@@ -19,6 +21,9 @@ export default async function handler(
       take: 10,
       orderBy: {
         createdAt: 'desc',
+      },
+      where: {
+        authorId: authorId,
       },
       select: {
         content: true,

@@ -13,22 +13,18 @@ import { getSession } from 'next-auth/react';
 import { SessionWithUserId } from 'pages/api/auth/[...nextauth]';
 import Navbar from '@components/Navbar';
 import Head from 'next/head';
+import RecentChirps from '@components/RecentChirps';
+import { useEffect } from 'react';
 
-// TODO: reorder this mess
-// TODO: not found error handling
-interface UserAndChirpType {
+interface User {
+  id: string;
   username: string;
   name: string;
   pfpUrl: string;
-  // override the createdAt property of Chirp to become a number
-  chirps: (Omit<Chirp, 'createdAt'> & {
-    createdAt: number;
-    liked: boolean;
-  })[];
 }
 
 interface PageProps {
-  user: UserAndChirpType;
+  user: User;
 }
 
 function UserPage({ user }: PageProps) {
@@ -53,41 +49,9 @@ function UserPage({ user }: PageProps) {
 
         <Heading>{user.name}'s Recent Chirps</Heading>
 
-        <UserChirps data={user} />
+        <RecentChirps userId={user.id} />
       </Container>
     </Center>
-  );
-}
-
-function UserChirps({
-  data: { chirps, name, username, pfpUrl },
-}: {
-  data: UserAndChirpType;
-}) {
-  return (
-    <Box mt="10">
-      {chirps.map((chirp, i) => {
-        return (
-          <ChirpCard
-            key={i}
-            {...{
-              id: chirp.id,
-              authorId: chirp.authorId,
-              content: chirp.content,
-              author: {
-                name,
-                username,
-                pfpUrl,
-                id: chirp.authorId,
-              },
-              createdAt: chirp.createdAt as number,
-              liked: chirp.liked,
-              numLikes: chirp.numLikes,
-            }}
-          />
-        );
-      })}
-    </Box>
   );
 }
 
@@ -106,14 +70,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   await prisma.$connect();
 
   let user: {
+    id: string;
     username: string;
     name: string;
     pfpUrl: string;
-    chirps: (Chirp & {
-      createdAt: number;
-      likes: Like[];
-      liked: boolean;
-    })[];
   };
   // handle malformed urls
   try {
@@ -122,23 +82,10 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
         username: query.username as string,
       },
       select: {
+        id: true,
         username: true,
         name: true,
         pfpUrl: true,
-        chirps: {
-          take: 10,
-          orderBy: {
-            createdAt: 'desc',
-          },
-          // only include likes if the user is signed in
-          include: !!session && {
-            likes: {
-              where: {
-                userId: session.user.id,
-              },
-            },
-          },
-        },
       },
     })) as typeof user;
   } catch {
@@ -152,15 +99,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       notFound: true,
     };
   }
-
-  user.chirps.forEach((v) => {
-    // nextjs cant serialize Date
-    // @ts-ignore
-    v.createdAt = v.createdAt.getTime();
-
-    if (!!session) v.liked = v.likes?.length !== 0;
-    delete v.likes;
-  });
 
   await prisma.$disconnect();
 

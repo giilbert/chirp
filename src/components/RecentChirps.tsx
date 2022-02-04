@@ -17,11 +17,15 @@ import ChirpSkeleton from './ChirpSkeleton';
 
 const RECENT_CHIRPS_ENDPOINT = '/api/getRecentChirps';
 const CHIRP_CHUNK_SIZE = 10;
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-function RecentChirps() {
+function RecentChirps({ userId }: { userId?: string }) {
   const { data, error, setSize, mutate } = useSWR<Chirp[]>(
-    (i) => `${RECENT_CHIRPS_ENDPOINT}?offset=${i * CHIRP_CHUNK_SIZE}`,
+    (i) =>
+      `${RECENT_CHIRPS_ENDPOINT}?offset=${i * CHIRP_CHUNK_SIZE}${
+        userId && `&user=${userId}`
+      }`,
     fetcher,
     {
       revalidateOnFocus: true,

@@ -2,7 +2,6 @@ import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
-  Container,
   Flex,
   HStack,
   Text,
@@ -57,6 +56,7 @@ function Navbar() {
                   src="/chirp_logo_black.svg"
                   width="96.75"
                   height="46.25"
+                  alt="Chirp logo"
                   priority
                 />
               ) : (
@@ -64,6 +64,7 @@ function Navbar() {
                   src="/chirp_logo_white.svg"
                   width="96.75"
                   height="46.25"
+                  alt="Chirp logo"
                   priority
                 />
               )}

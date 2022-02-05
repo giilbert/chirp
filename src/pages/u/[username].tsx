@@ -39,6 +39,7 @@ function UserPage({ user }: PageProps) {
         <Flex alignItems="center">
           <Image
             src={user.pfpUrl}
+            alt="Author profile picture"
             width="64px"
             height="64px"
             borderRadius="999px"

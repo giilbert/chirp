@@ -1,12 +1,10 @@
 import {
   Box,
-  BoxProps,
   Container,
   Flex,
   FlexProps,
   HStack,
   Image,
-  StackProps,
   Text,
   useToast,
   VStack,
@@ -42,7 +40,13 @@ function Chirp({
         boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)',
       }}
     >
-      <Image src={author.pfpUrl} width="10" height="10" borderRadius="999" />
+      <Image
+        src={author.pfpUrl}
+        width="10"
+        height="10"
+        borderRadius="999"
+        alt="Author profile picture"
+      />
       <Container>
         {!!replyTo && (
           <HStack

@@ -8,7 +8,6 @@ import Navbar from '@components/Navbar';
 import Head from 'next/head';
 import CreateChirp from '@components/CreateChirp';
 import EventEmitter from 'events';
-import useSWR from 'swr';
 import RecentChirps from '@components/RecentChirps';
 
 // TODO: not found error handling

@@ -15,7 +15,7 @@ import {
   useDisclosure,
   Text,
 } from '@chakra-ui/react';
-import ReactAvatarEditor, { AvatarEditorProps } from 'react-avatar-editor';
+import ReactAvatarEditor from 'react-avatar-editor';
 import React, {
   createContext,
   Dispatch,

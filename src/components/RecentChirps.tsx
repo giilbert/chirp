@@ -1,13 +1,5 @@
-import {
-  Box,
-  Center,
-  Flex,
-  Skeleton,
-  SkeletonText,
-  Spinner,
-  Text,
-} from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { Box, Spinner, Text } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { InView } from 'react-intersection-observer';
 import ChirpCard from './Chirp';
 import { Chirp } from '../utils/types/Chirp';

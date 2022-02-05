@@ -29,6 +29,8 @@ export default async function handler(
     return;
   }
 
+  const replyToId = data.replyToId;
+
   await prisma.$connect();
 
   const chirp = await prisma.chirp.create({
@@ -36,6 +38,7 @@ export default async function handler(
       // replace multiple new lines, max of one empty line
       content: data.content.replace(/[\n]{3,}/g, '\n\n'),
       authorId: session.user.id,
+      replyToId,
     },
     include: {
       author: {

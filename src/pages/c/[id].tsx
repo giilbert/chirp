@@ -6,24 +6,36 @@ import { getSession } from 'next-auth/react';
 import { SessionWithUserId } from 'pages/api/auth/[...nextauth]';
 import Navbar from '@components/Navbar';
 import Head from 'next/head';
+import CreateChirp from '@components/CreateChirp';
+import EventEmitter from 'events';
+import useSWR from 'swr';
+import RecentChirps from '@components/RecentChirps';
 
 // TODO: not found error handling
 
-interface PageProps {
-  chirp: Chirp & {
+type ChirpWithReply = Chirp & {
+  author: { id: string; name: string; username: string; pfpUrl: string };
+  likes: Like[];
+  liked: boolean;
+  replyTo: {
+    id: string;
     author: {
       id: string;
-      name: string;
       username: string;
-      pfpUrl: string;
+      name: string;
     };
-    likes: Like[];
-    liked: boolean;
+  };
+};
+
+interface PageProps {
+  chirp: ChirpWithReply & {
     createdAt: number;
   };
 }
 
-function UserPage({ chirp }: PageProps) {
+const chirpDisplayListener = new EventEmitter();
+
+function ChirpPage({ chirp }: PageProps) {
   return (
     <Center>
       {/* meta tags for web scrapers */}
@@ -47,6 +59,10 @@ function UserPage({ chirp }: PageProps) {
             createdAt={chirp.createdAt}
             author={chirp.author}
           />
+
+          <CreateChirp replyToId={chirp.id} listener={chirpDisplayListener} />
+
+          <RecentChirps chirpId={chirp.id} />
         </Box>
       </Container>
     </Center>
@@ -68,11 +84,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
   await prisma.$connect();
 
-  let chirp: Chirp & {
-    author: { id: string; name: string; username: string; pfpUrl: string };
-    likes: Like[];
-    liked: boolean;
-  };
+  let chirp: ChirpWithReply;
   // handle malformed urls
   try {
     chirp = (await prisma.chirp.findFirst({
@@ -91,6 +103,19 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
         likes: !!session && {
           where: {
             userId: session.user.id,
+          },
+        },
+
+        replyTo: {
+          select: {
+            id: true,
+            author: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+              },
+            },
           },
         },
       },
@@ -125,4 +150,4 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   };
 };
 
-export default UserPage;
+export default ChirpPage;

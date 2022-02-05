@@ -12,6 +12,16 @@ interface Chirp {
   numLikes: number;
   // whether the signed-in user has liked the chirp
   liked: boolean;
+
+  replyTo?: {
+    // chirp id
+    id: string;
+    author: {
+      id: string;
+      name: string;
+      username: string;
+    };
+  };
 }
 
 export type { Chirp };

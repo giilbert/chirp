@@ -2,6 +2,7 @@ import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
+  Container,
   Flex,
   HStack,
   Text,
@@ -69,11 +70,11 @@ function Navbar() {
             </motion.div>
           </Link>
 
-          {!smallerThan600 && <AccountMenu />}
+          <Box px="2">{!smallerThan600 && <AccountMenu />}</Box>
         </HStack>
       </Flex>
       {isOpen && smallerThan600 && (
-        <Box mt="2" borderBottom="1px" pb="10" borderColor={borderColor}>
+        <Box mt="2" borderBottom="1px" pb="5" borderColor={borderColor}>
           <AccountMenu />
         </Box>
       )}
@@ -89,20 +90,21 @@ function AccountMenu() {
 
   return (
     <Flex
-      ml="5"
       alignItems="flex-start"
       flexDirection={smallerThan600 ? 'column' : 'row'}
     >
       {session ? (
         <Text fontSize="xl" ml={!smallerThan600 && '5'}>
           Signed in as <b>{session.user.name}</b>
-          <Button mx="3" mb="1" onClick={() => signOut()}>
+          <Button mr="3" mb="1" onClick={() => signOut()}>
             Sign out
           </Button>
         </Text>
       ) : (
         <Link href="/login">
-          <Button mx="3">Login</Button>
+          <Button mr="3" mb="2">
+            Login
+          </Button>
         </Link>
       )}
 

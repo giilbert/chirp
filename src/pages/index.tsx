@@ -24,6 +24,7 @@ import Navbar from '@components/Navbar';
 import Head from 'next/head';
 import { EventEmitter } from 'events';
 import RecentChirps from '@components/RecentChirps';
+import CreateChirp from '@components/CreateChirp';
 
 interface PageProps {
   session: SessionWithUserId;
@@ -39,97 +40,18 @@ function IndexPage({ session }: PageProps) {
     <Center>
       <Head>
         <title>Chirp</title>
-        <meta
-          name="description"
-          content="Chirp Chirp Chirp Chirp Chirp Chirp"
-        />
+        <meta name="description" content="Not a Twitter clone" />
       </Head>
       <Container maxWidth="600px" mt="50px">
         <Navbar />
 
-        {session && <CreateChirp />}
+        {session && <CreateChirp listener={chirpDisplayListener} />}
 
         <Heading mt={!session && '10'}>Recent Chirps</Heading>
 
         <RecentChirps />
       </Container>
     </Center>
-  );
-}
-
-interface FormValues {
-  content: string;
-}
-
-const schema = Yup.object().shape({
-  content: Yup.string().required('You need something to chirp about'),
-});
-
-const maxLength = 500;
-const AnimatedTextarea = motion<TextareaProps>(Textarea);
-
-function CreateChirp() {
-  const [value, setValue] = useState('');
-
-  return (
-    <Box my="10">
-      <Formik
-        initialValues={{
-          content: '',
-        }}
-        validationSchema={schema}
-        onSubmit={(values, helpers) => {
-          // TODO: error handling (toast)
-          fetch('/api/createChirp', {
-            method: 'POST',
-            body: JSON.stringify(values),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }).then(async (res) => {
-            if (res.ok) {
-              chirpDisplayListener.emit('add-chirp');
-
-              helpers.resetForm();
-              setValue('');
-            }
-          });
-        }}
-      >
-        {({
-          errors,
-          isSubmitting,
-          setFieldValue,
-        }: /* and other goodies */
-        FormikProps<FormValues>) => (
-          <Form>
-            <AnimatedTextarea
-              placeholder="Chirp about something!"
-              resize="none"
-              height="30px"
-              whileFocus={{
-                height: '200px',
-              }}
-              value={value}
-              isDisabled={isSubmitting}
-              onChange={(e) => {
-                setFieldValue('content', e.target.value, false);
-                // also update the counter
-                setValue(e.target.value.substring(0, maxLength));
-              }}
-            />
-            <Text color="gray.400">
-              {value.length}/{maxLength}
-            </Text>
-            <Text color="red.300">{errors.content}</Text>
-
-            <Button colorScheme="green" type="submit" isLoading={isSubmitting}>
-              Chirp
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Box>
   );
 }
 

@@ -48,6 +48,18 @@ export default async function handler(
             userId: session.user.id,
           },
         },
+        replyTo: {
+          select: {
+            id: true,
+            author: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+              },
+            },
+          },
+        },
       },
       skip: offset,
     })

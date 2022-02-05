@@ -23,6 +23,11 @@ model Chirp {
   id        String   @id @map("_id") @default(dbgenerated()) @db.ObjectId
   content   String
   createdAt DateTime @default(now())
+
+  replies   Chirp[]  @relation("Reply")
+  replyToId String?  @db.ObjectId
+  replyTo   Chirp?   @relation("Reply", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
   authorId  String   @db.ObjectId
   author    User     @relation(fields: [authorId], references: [id])
   numLikes  Int      @default(0)

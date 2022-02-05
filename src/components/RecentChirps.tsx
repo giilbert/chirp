@@ -16,19 +16,34 @@ import { chirpDisplayListener } from 'pages';
 import ChirpSkeleton from './ChirpSkeleton';
 
 const RECENT_CHIRPS_ENDPOINT = '/api/getRecentChirps';
+const CHIRP_REPLIES_ENDPOINT = '/api/getChirpReplies';
 const CHIRP_CHUNK_SIZE = 10;
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-function RecentChirps({ userId }: { userId?: string }) {
+interface RecentChirpsProps {
+  userId?: string;
+  // get recent replies to a chirp
+  chirpId?: string;
+}
+
+function RecentChirps({ userId, chirpId }: RecentChirpsProps) {
   const { data, error, setSize, mutate } = useSWR<Chirp[]>(
-    (i) =>
-      `${RECENT_CHIRPS_ENDPOINT}?offset=${i * CHIRP_CHUNK_SIZE}${
+    (i) => {
+      // fetch the replies of a chirp with id chirpId
+      if (chirpId)
+        return `${CHIRP_REPLIES_ENDPOINT}?offset=${i * CHIRP_CHUNK_SIZE}${
+          chirpId && `&chirpId=${chirpId}`
+        }`;
+
+      return `${RECENT_CHIRPS_ENDPOINT}?offset=${i * CHIRP_CHUNK_SIZE}${
         userId && `&user=${userId}`
-      }`,
+      }`;
+    },
     fetcher,
     {
       revalidateOnFocus: true,
+      revalidateIfStale: true,
     }
   );
 
@@ -40,9 +55,9 @@ function RecentChirps({ userId }: { userId?: string }) {
     isEmpty || (data && data[data.length - 1]?.length < CHIRP_CHUNK_SIZE);
 
   useEffect(() => {
-    chirpDisplayListener.on('add-chirp', mutate);
+    chirpDisplayListener.on('add-chirp', () => mutate());
     return () => {
-      chirpDisplayListener.off('add-chirp', mutate);
+      chirpDisplayListener.off('add-chirp', () => mutate());
     };
   }, []);
 

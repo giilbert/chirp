@@ -4,7 +4,9 @@ import {
   Container,
   Flex,
   FlexProps,
+  HStack,
   Image,
+  StackProps,
   Text,
   useToast,
   VStack,
@@ -13,6 +15,7 @@ import { Chirp as ChirpProps } from '../utils/types/Chirp';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
 import { Dispatch, SetStateAction, useState } from 'react';
+import { ArrowForwardIcon, IconProps } from '@chakra-ui/icons';
 
 const AnimatedFlex = motion<FlexProps>(Flex);
 
@@ -23,6 +26,7 @@ function Chirp({
   liked,
   numLikes,
   id,
+  replyTo,
 }: ChirpProps) {
   const date = new Date(createdAt);
   const [likes, setLikes] = useState(numLikes);
@@ -33,13 +37,27 @@ function Chirp({
       p="4"
       mb="2"
       whileHover={{
-        scale: 1.1,
+        scale: 1.05,
         cursor: 'pointer',
         boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)',
       }}
     >
       <Image src={author.pfpUrl} width="10" height="10" borderRadius="999" />
       <Container>
+        {!!replyTo && (
+          <HStack
+            alignItems="center"
+            mb="2"
+            _hover={{
+              textDecoration: 'underline',
+            }}
+          >
+            <ArrowForwardIcon color="blue.400" />
+            <Link href={`/c/${replyTo.id}`}>
+              <Text color="blue.400">Reply to {replyTo.author.name}</Text>
+            </Link>
+          </HStack>
+        )}
         <Link href={`/c/${id}`}>
           <VStack alignItems="flex-start">
             <Flex alignItems="center" flexWrap="wrap">

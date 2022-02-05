@@ -95,7 +95,14 @@ function AccountMenu() {
     >
       {session ? (
         <Text fontSize="xl" ml={!smallerThan600 && '5'}>
-          Signed in as <b>{session.user.name}</b>
+          Signed in as{' '}
+          <b
+            style={{
+              marginRight: '10px',
+            }}
+          >
+            {session.user.name}
+          </b>
           <Button mr="3" mb="1" onClick={() => signOut()}>
             Sign out
           </Button>

@@ -63,7 +63,7 @@ function ChirpPage({ chirp }: PageProps) {
             author={chirp.author}
           />
 
-          {session && (
+          {session.status === 'authenticated' && (
             <CreateChirp replyToId={chirp.id} listener={chirpDisplayListener} />
           )}
 

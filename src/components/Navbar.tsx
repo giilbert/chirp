@@ -93,6 +93,7 @@ function AccountMenu() {
     <Flex
       alignItems="flex-start"
       flexDirection={smallerThan600 ? 'column' : 'row'}
+      className={styles.accountMenu}
     >
       {session ? (
         <Text fontSize="xl" ml={!smallerThan600 && '5'}>

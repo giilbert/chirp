@@ -61,7 +61,7 @@ export default async function handler(
   });
 
   chirp.replies.map((v) => {
-    const liked = v.likes.length !== 0;
+    const liked = v.likes?.length !== 0;
 
     delete v.likes;
 

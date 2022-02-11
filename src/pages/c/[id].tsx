@@ -2,7 +2,7 @@ import { Box, Center, Container } from '@chakra-ui/react';
 import { Chirp, Like, PrismaClient } from '@prisma/client';
 import { GetServerSideProps } from 'next';
 import ChirpCard from '@components/Chirp';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { SessionWithUserId } from 'pages/api/auth/[...nextauth]';
 import Navbar from '@components/Navbar';
 import Head from 'next/head';
@@ -35,6 +35,10 @@ interface PageProps {
 const chirpDisplayListener = new EventEmitter();
 
 function ChirpPage({ chirp }: PageProps) {
+  const session = useSession({
+    required: false,
+  });
+
   return (
     <Center>
       {/* meta tags for web scrapers */}
@@ -59,7 +63,9 @@ function ChirpPage({ chirp }: PageProps) {
             author={chirp.author}
           />
 
-          <CreateChirp replyToId={chirp.id} listener={chirpDisplayListener} />
+          {session && (
+            <CreateChirp replyToId={chirp.id} listener={chirpDisplayListener} />
+          )}
 
           <RecentChirps chirpId={chirp.id} />
         </Box>

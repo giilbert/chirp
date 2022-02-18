@@ -22,6 +22,9 @@ interface Chirp {
       username: string;
     };
   };
+
+  // array of urls to the media
+  chirpMedia: string[];
 }
 
 export type { Chirp };

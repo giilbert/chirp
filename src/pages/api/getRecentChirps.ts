@@ -29,6 +29,7 @@ export default async function handler(
         content: true,
         createdAt: true,
         id: true,
+        chirpMedia: true,
         author: {
           select: {
             name: true,

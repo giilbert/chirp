@@ -1,11 +1,20 @@
 import {
   Box,
+  Button,
   Container,
   Flex,
   FlexProps,
   HStack,
   Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
+  useDisclosure,
   useToast,
   VStack,
 } from '@chakra-ui/react';
@@ -25,6 +34,7 @@ function Chirp({
   numLikes,
   id,
   replyTo,
+  chirpMedia,
 }: ChirpProps) {
   const date = new Date(createdAt);
   const [likes, setLikes] = useState(numLikes);
@@ -35,7 +45,7 @@ function Chirp({
       p="4"
       mb="2"
       whileHover={{
-        scale: 1.05,
+        scale: 1.03,
         cursor: 'pointer',
         boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.1)',
       }}
@@ -83,6 +93,8 @@ function Chirp({
             </Flex>
 
             <ContentDisplay content={content} />
+
+            <ImageDisplay media={chirpMedia} />
           </VStack>
         </Link>
 
@@ -228,6 +240,48 @@ function HeartIcon({
         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
       />
     </motion.svg>
+  );
+}
+
+function ImageDisplay({ media }: { media: string[] }) {
+  return (
+    <>
+      {media.map((v) => (
+        <Media src={v} />
+      ))}
+    </>
+  );
+}
+
+function Media({ src }: { src: string }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <>
+      <Image
+        src={src}
+        width="100%"
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+      />
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalCloseButton />
+          <ModalBody display="flex" justifyContent="center">
+            <Image src={src} minWidth="200px" />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="purple" mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 

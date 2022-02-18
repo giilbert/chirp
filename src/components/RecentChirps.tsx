@@ -25,17 +25,16 @@ function RecentChirps({ userId, chirpId }: RecentChirpsProps) {
       // fetch the replies of a chirp with id chirpId
       if (chirpId)
         return `${CHIRP_REPLIES_ENDPOINT}?offset=${i * CHIRP_CHUNK_SIZE}${
-          chirpId && `&chirpId=${chirpId}`
+          chirpId ? `&chirpId=${chirpId}` : ''
         }`;
 
       return `${RECENT_CHIRPS_ENDPOINT}?offset=${i * CHIRP_CHUNK_SIZE}${
-        userId && `&user=${userId}`
+        userId ? `&user=${userId}` : ''
       }`;
     },
     fetcher,
     {
       revalidateOnFocus: true,
-      revalidateIfStale: true,
     }
   );
 
